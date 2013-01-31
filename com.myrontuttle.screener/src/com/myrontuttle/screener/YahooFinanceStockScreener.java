@@ -18,6 +18,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
+import com.myrontuttle.adaptivetrader.ScreenCriteria;
+import com.myrontuttle.adaptivetrader.Screener;
+
 public class YahooFinanceStockScreener implements Screener {
     final static WebClient webClient;
 
@@ -37,12 +40,10 @@ public class YahooFinanceStockScreener implements Screener {
 		BASE_PARAMS.add(new BasicNameValuePair("db", "stocks"));
 		// &vw=1&db=stocks
 	}
-
-    private static YahooFinanceStockScreener screener;
     
 	private ArrayList<ScreenCriteria> criteria;
 	
-	private YahooFinanceStockScreener() {
+	public YahooFinanceStockScreener() {
 		String URI = buildURI(null, STOCK_QUERY_PATH).toString();
         try {
     	    final HtmlPage page = webClient.getPage(URI);
@@ -52,14 +53,6 @@ public class YahooFinanceStockScreener implements Screener {
             e.printStackTrace();
             this.criteria = null;
         }
-	}
-
-	public static synchronized YahooFinanceStockScreener getScreener() {
-		if (screener != null) {
-			return screener;
-		}
-		screener = new YahooFinanceStockScreener();
-		return screener;
 	}
 
 	@Override
