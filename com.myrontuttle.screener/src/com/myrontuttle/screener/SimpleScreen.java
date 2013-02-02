@@ -1,7 +1,7 @@
 package com.myrontuttle.screener;
 
 import java.util.List;
-import com.myrontuttle.adaptivetrader.Screener;
+import com.myrontuttle.adaptivetrader.ScreenerService;
 import com.myrontuttle.adaptivetrader.ScreenCriteria;
 
 public class SimpleScreen {
@@ -11,7 +11,7 @@ public class SimpleScreen {
 	 */
 	public static void main(String[] args) {
 		
-		Screener screener = new YahooFinanceStockScreener();
+		ScreenerService screener = new YahooFinanceStockScreener();
 		
 		List<ScreenCriteria> options = screener.getAvailableCriteria();
 		

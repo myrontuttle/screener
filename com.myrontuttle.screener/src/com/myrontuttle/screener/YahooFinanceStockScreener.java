@@ -19,9 +19,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
 import com.myrontuttle.adaptivetrader.ScreenCriteria;
-import com.myrontuttle.adaptivetrader.Screener;
+import com.myrontuttle.adaptivetrader.ScreenerService;
 
-public class YahooFinanceStockScreener implements Screener {
+public class YahooFinanceStockScreener implements ScreenerService {
     final static WebClient webClient;
 
 	public final static String SCHEME = "http";
