@@ -41,7 +41,7 @@ public class YahooFinanceStockScreener implements ScreenerService {
 		// &vw=1&db=stocks
 	}
     
-	private ArrayList<ScreenCriteria> criteria;
+	private ScreenCriteria criteria[];
 	
 	public YahooFinanceStockScreener() {
 		String URI = buildURI(null, STOCK_QUERY_PATH).toString();
@@ -56,11 +56,11 @@ public class YahooFinanceStockScreener implements ScreenerService {
 	}
 
 	@Override
-	public ArrayList<ScreenCriteria> getAvailableCriteria() {
+	public ScreenCriteria[] getAvailableCriteria() {
 		return criteria;
 	}
 	
-	private static ArrayList<ScreenCriteria> getSelections(HtmlPage page) {
+	private static ScreenCriteria[] getSelections(HtmlPage page) {
 		ArrayList<ScreenCriteria> selections = new ArrayList<ScreenCriteria>(10);
 		
 		DomNodeList<HtmlElement> selects = page.getElementsByTagName("select");
@@ -78,26 +78,28 @@ public class YahooFinanceStockScreener implements ScreenerService {
 						new ScreenCriteria(sel.getNameAttribute(), valuesArray));
 			}
 		}
-		
-		return selections;
+		ScreenCriteria[] screens = new ScreenCriteria[selections.size()];
+		return selections.toArray(screens);
 	}
 
 	@Override
-	public List<String> screen(int[] selectedCriteria) {
+	public String[] screen(int[] selectedCriteria) {
 			List<NameValuePair> selected = 
-				new ArrayList<NameValuePair>(criteria.size());
+				new ArrayList<NameValuePair>(criteria.length);
 			
 			for (int i=0; i<selectedCriteria.length; i++) {
-				selected.add(
-					new BasicNameValuePair(
-						criteria.get(i).getName(), 
-						criteria.get(i).getValue(selectedCriteria[i])));
+				if (selectedCriteria[i] > 0) {
+					selected.add(
+						new BasicNameValuePair(
+							criteria[i].getName(), 
+							criteria[i].getValue(selectedCriteria[i])));
+				}
 			}
 			
 			return screenForSymbols(selected);
 	}
 	
-	static ArrayList<String> screenForSymbols(List<NameValuePair> selected) {
+	static String[] screenForSymbols(List<NameValuePair> selected) {
 
 		if (selected == null) {
         	System.out.println("Error: No criteria selected");
@@ -134,7 +136,7 @@ public class YahooFinanceStockScreener implements ScreenerService {
 		}
 	}
 	
-	private static ArrayList<String> getSymbols(HtmlPage page) {
+	private static String[] getSymbols(HtmlPage page) {
 		ArrayList<String> symbols = new ArrayList<String>(10);
 		
 		final DomNodeList<HtmlElement> tables = page.getElementsByTagName("table");
@@ -148,14 +150,15 @@ public class YahooFinanceStockScreener implements ScreenerService {
 			}
 			
 		}
-		return symbols;
+		String[] symbolArray = new String[symbols.size()];
+		return symbols.toArray(symbolArray);
 	}
 
 	@Override
 	public boolean areValid(int[] selectedCriteria) {
-		for (int i=0; i<criteria.size(); i++) {
+		for (int i=0; i<criteria.length; i++) {
 			if (selectedCriteria[i] < 0 || 
-					selectedCriteria[i] >= criteria.get(i).getLength()) {
+					selectedCriteria[i] >= criteria[i].getLength()) {
 				return false;
 			}
 		}

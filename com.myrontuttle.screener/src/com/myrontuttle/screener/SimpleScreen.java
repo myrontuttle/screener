@@ -1,6 +1,5 @@
 package com.myrontuttle.screener;
 
-import java.util.List;
 import com.myrontuttle.adaptivetrader.ScreenerService;
 import com.myrontuttle.adaptivetrader.ScreenCriteria;
 
@@ -13,7 +12,7 @@ public class SimpleScreen {
 		
 		ScreenerService screener = new YahooFinanceStockScreener();
 		
-		List<ScreenCriteria> options = null;
+		ScreenCriteria[] options = null;
 		try {
 			options = screener.getAvailableCriteria();
 		} catch (Exception e) {
@@ -21,15 +20,15 @@ public class SimpleScreen {
 			e.printStackTrace();
 		}
 		
-		int[] selected = new int[options.size() / 4];
+		int[] selected = new int[options.length / 4];
 		
 		for (int i=0; i<selected.length; i++) {
-			selected[i] = options.get(i).getLength() - 1;
+			selected[i] = options[i].getLength() - 1;
 		}
 		
 		try {
 			if (screener.areValid(selected)) {
-				List<String> symbols = screener.screen(selected);
+				String symbols[] = screener.screen(selected);
 				for (String symbol : symbols) {
 					System.out.println(symbol);
 				}
