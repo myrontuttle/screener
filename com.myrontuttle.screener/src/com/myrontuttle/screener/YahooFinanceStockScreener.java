@@ -18,8 +18,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
-import com.myrontuttle.adaptivetrader.ScreenCriteria;
+import com.myrontuttle.adaptivetrader.AvailableScreenCriteria;
 import com.myrontuttle.adaptivetrader.ScreenerService;
+import com.myrontuttle.adaptivetrader.SelectedScreenCriteria;
 
 public class YahooFinanceStockScreener implements ScreenerService {
     final static WebClient webClient;
@@ -41,7 +42,7 @@ public class YahooFinanceStockScreener implements ScreenerService {
 		// &vw=1&db=stocks
 	}
     
-	private ScreenCriteria criteria[];
+	private AvailableScreenCriteria criteria[];
 	
 	public YahooFinanceStockScreener() {
 		String URI = buildURI(null, STOCK_QUERY_PATH).toString();
@@ -56,12 +57,12 @@ public class YahooFinanceStockScreener implements ScreenerService {
 	}
 
 	@Override
-	public ScreenCriteria[] getAvailableCriteria() {
+	public AvailableScreenCriteria[] getAvailableCriteria() {
 		return criteria;
 	}
 	
-	private static ScreenCriteria[] getSelections(HtmlPage page) {
-		ArrayList<ScreenCriteria> selections = new ArrayList<ScreenCriteria>(10);
+	private static AvailableScreenCriteria[] getSelections(HtmlPage page) {
+		ArrayList<AvailableScreenCriteria> selections = new ArrayList<AvailableScreenCriteria>(10);
 		
 		DomNodeList<HtmlElement> selects = page.getElementsByTagName("select");
 		for (HtmlElement select : selects) {
@@ -75,25 +76,23 @@ public class YahooFinanceStockScreener implements ScreenerService {
 				String[] valuesArray = new String[values.size()];
 				values.toArray(valuesArray);
 				selections.add(
-						new ScreenCriteria(sel.getNameAttribute(), valuesArray));
+						new AvailableScreenCriteria(sel.getNameAttribute(), valuesArray));
 			}
 		}
-		ScreenCriteria[] screens = new ScreenCriteria[selections.size()];
+		AvailableScreenCriteria[] screens = new AvailableScreenCriteria[selections.size()];
 		return selections.toArray(screens);
 	}
 
 	@Override
-	public String[] screen(int[] selectedCriteria) {
+	public String[] screen(SelectedScreenCriteria[] selectedCriteria) {
 			List<NameValuePair> selected = 
-				new ArrayList<NameValuePair>(criteria.length);
+				new ArrayList<NameValuePair>(selectedCriteria.length);
 			
 			for (int i=0; i<selectedCriteria.length; i++) {
-				if (selectedCriteria[i] > 0) {
-					selected.add(
-						new BasicNameValuePair(
-							criteria[i].getName(), 
-							criteria[i].getValue(selectedCriteria[i])));
-				}
+				selected.add(
+					new BasicNameValuePair(
+						selectedCriteria[i].getName(), 
+						selectedCriteria[i].getValue()));
 			}
 			
 			return screenForSymbols(selected);
@@ -152,16 +151,5 @@ public class YahooFinanceStockScreener implements ScreenerService {
 		}
 		String[] symbolArray = new String[symbols.size()];
 		return symbols.toArray(symbolArray);
-	}
-
-	@Override
-	public boolean areValid(int[] selectedCriteria) {
-		for (int i=0; i<criteria.length; i++) {
-			if (selectedCriteria[i] < 0 || 
-					selectedCriteria[i] >= criteria[i].getLength()) {
-				return false;
-			}
-		}
-		return true;
 	}
 }

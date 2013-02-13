@@ -1,7 +1,8 @@
 package com.myrontuttle.screener;
 
 import com.myrontuttle.adaptivetrader.ScreenerService;
-import com.myrontuttle.adaptivetrader.ScreenCriteria;
+import com.myrontuttle.adaptivetrader.AvailableScreenCriteria;
+import com.myrontuttle.adaptivetrader.SelectedScreenCriteria;
 
 public class SimpleScreen {
 
@@ -12,28 +13,26 @@ public class SimpleScreen {
 		
 		ScreenerService screener = new YahooFinanceStockScreener();
 		
-		ScreenCriteria[] options = null;
+		AvailableScreenCriteria[] availableCriteria = null;
 		try {
-			options = screener.getAvailableCriteria();
+			availableCriteria = screener.getAvailableCriteria();
 		} catch (Exception e) {
 			System.out.println("Error getting screen criteria: " + e.getMessage());
 			e.printStackTrace();
 		}
 		
-		int[] selected = new int[options.length / 4];
+		SelectedScreenCriteria[] selected = new SelectedScreenCriteria[4];
 		
 		for (int i=0; i<selected.length; i++) {
-			selected[i] = options[i].getLength() - 1;
+			selected[i] = new SelectedScreenCriteria(
+								availableCriteria[i].getName(),
+								availableCriteria[i].getAcceptedValue(0));
 		}
 		
 		try {
-			if (screener.areValid(selected)) {
-				String symbols[] = screener.screen(selected);
-				for (String symbol : symbols) {
-					System.out.println(symbol);
-				}
-			} else {
-				System.out.println("Invalid selection");
+			String symbols[] = screener.screen(selected);
+			for (String symbol : symbols) {
+				System.out.println(symbol);
 			}
 		} catch (Exception e) {
 			System.out.println("Error screening for stocks: " + e.getMessage());
