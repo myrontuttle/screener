@@ -6,6 +6,8 @@ import com.myrontuttle.adaptivetrader.SelectedScreenCriteria;
 
 public class SimpleScreen {
 
+	public final static int MAX_SYMBOLS = 20;
+	
 	/**
 	 * @param args
 	 */
@@ -26,11 +28,12 @@ public class SimpleScreen {
 		for (int i=0; i<selected.length; i++) {
 			selected[i] = new SelectedScreenCriteria(
 								availableCriteria[i].getName(),
-								availableCriteria[i].getAcceptedValue(0));
+								availableCriteria[i].getAcceptedValue(0),
+								null);
 		}
 		
 		try {
-			String symbols[] = screener.screen(selected);
+			String symbols[] = screener.screen(selected, MAX_SYMBOLS);
 			for (String symbol : symbols) {
 				System.out.println(symbol);
 			}

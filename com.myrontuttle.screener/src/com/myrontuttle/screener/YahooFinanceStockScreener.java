@@ -76,7 +76,7 @@ public class YahooFinanceStockScreener implements ScreenerService {
 				String[] valuesArray = new String[values.size()];
 				values.toArray(valuesArray);
 				selections.add(
-						new AvailableScreenCriteria(sel.getNameAttribute(), valuesArray));
+						new AvailableScreenCriteria(sel.getNameAttribute(), valuesArray, null));
 			}
 		}
 		AvailableScreenCriteria[] screens = new AvailableScreenCriteria[selections.size()];
@@ -84,7 +84,7 @@ public class YahooFinanceStockScreener implements ScreenerService {
 	}
 
 	@Override
-	public String[] screen(SelectedScreenCriteria[] selectedCriteria) {
+	public String[] screen(SelectedScreenCriteria[] selectedCriteria, int maxSymbols) {
 			List<NameValuePair> selected = 
 				new ArrayList<NameValuePair>(selectedCriteria.length);
 			
